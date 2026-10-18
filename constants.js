@@ -72,3 +72,6 @@ const HF_BIAS_MULT_BASE = 2.2;
 // Amplitude lower than which a frequency could be considered negligible
 // A higher value means you see less activity but only the louder frequencies
 const AMPLITUDE_THRESHOLD = 40;
+
+// Keep only this fraction of each wave's peak height (e.g. 0.3 = top 30%)
+const PEAK_KEEP_FRACTION = 0.3;

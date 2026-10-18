@@ -171,6 +171,20 @@ function draw() {
       val *= MULT;
       current_wave_amps.push(val);
     }
+
+    // Drop everything below the top PEAK_KEEP_FRACTION of this wave's peak
+    let peak = 0;
+    for (let i = 0; i < current_wave_amps.length; ++i) {
+      if (current_wave_amps[i] > peak) {
+        peak = current_wave_amps[i];
+      }
+    }
+    const peakFloor = peak * (1 - PEAK_KEEP_FRACTION);
+    for (let i = 0; i < current_wave_amps.length; ++i) {
+      if (current_wave_amps[i] < peakFloor) {
+        current_wave_amps[i] = 0;
+      }
+    }
  
     // Transform each slice into the Unknown Pleasures shape
     current_wave_amps = transformWithWeights(current_wave_amps, cutoffs[j]);
