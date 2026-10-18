@@ -137,7 +137,8 @@ function draw() {
   fill(190, 190, 190);
   textFont('Arial');
   textSize(26);
-  text("JOY DIVISION", 168, 120);
+  textAlign(CENTER, BASELINE);
+  text("PEEVES", CANVAS_WIDTH / 2, 120);
 
   // Stroke gray, and fill black to ensure front waves hide the ones behind them
   stroke(200, 200, 200);
