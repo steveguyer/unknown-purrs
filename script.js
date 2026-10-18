@@ -147,14 +147,8 @@ function draw() {
   // Generate each wave..
   for (var j = 0; j < WAVE_COUNT; ++j) {
 
-    // Refer to constants.js for an explanation of this section
-    // Essentially, we sample more in the bass range and less in the higher range
-    let current_bin;
-    if (j < LF_WAVE_COUNT) {
-      current_bin = j * LF_WAVE_SEPARATION;
-    } else {
-      current_bin = (LF_WAVE_COUNT * LF_WAVE_SEPARATION) + (j * HF_WAVE_SEPARATION); 
-    }
+    // Spread low-frequency bins across the full top-to-bottom stack
+    let current_bin = Math.floor(map(j, 0, WAVE_COUNT - 1, LF_BIN_START, LF_BIN_END));
 
     // Generate a random peak cutoff for each wave
     if (!cutoffs[j]) {
@@ -163,27 +157,12 @@ function draw() {
     }
 
     // Get time slices for just the current bin, across all time slices
-    const MULT = HF_BIAS_MULT_BASE + (j * HF_BIAS_MULT_INCREMENT);
     let current_wave_amps = [];
     for (var i = SLICE_SIZE - 1; i >= 0 ; --i) {
       let val = points[i][current_bin] - AMPLITUDE_THRESHOLD;
       val = val < 0 ? 0 : val; // No negs
-      val *= MULT;
+      val *= LF_AMPLITUDE_MULT;
       current_wave_amps.push(val);
-    }
-
-    // Drop everything below the top PEAK_KEEP_FRACTION of this wave's peak
-    let peak = 0;
-    for (let i = 0; i < current_wave_amps.length; ++i) {
-      if (current_wave_amps[i] > peak) {
-        peak = current_wave_amps[i];
-      }
-    }
-    const peakFloor = peak * (1 - PEAK_KEEP_FRACTION);
-    for (let i = 0; i < current_wave_amps.length; ++i) {
-      if (current_wave_amps[i] < peakFloor) {
-        current_wave_amps[i] = 0;
-      }
     }
  
     // Transform each slice into the Unknown Pleasures shape

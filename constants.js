@@ -19,24 +19,13 @@ const SAMPLE_BINS = 1024;
 // This value higher => curve complexity higher, latency of visualization higher, performance lower 
 const SLICE_SIZE = 65;
 
-// I've found that the visualization looks best when low frequencies that are close together
-// are shown as separate lines, due to the logarithmic nature of sound perception.
-// We can't actually show all 1024 frequency bins, so we sample every n'th bin in the bass, and
-// every m'th bin for subsequent bins, where n is smaller than m. n + m is the total number of waves
+// Total stacked waves drawn top-to-bottom
+const WAVE_COUNT = 80;
 
-// n, the number of bass frequencies
-const LF_WAVE_COUNT = 15;
-
-//  Decides how often we sample bins in the bass range. If this is k, every kth bin is picked
-const LF_WAVE_SEPARATION = 4;
-
-// m, the number of mid and high frequencies
-const HF_WAVE_COUNT = 65;
-
-// Decides how often we sample bins in the higher range. If this is k, every kth bin is picked
-const HF_WAVE_SEPARATION = 7;
-
-const WAVE_COUNT = LF_WAVE_COUNT + HF_WAVE_COUNT;
+// FFT bin range spread across the full stack (low frequencies only).
+// Raise LF_BIN_END to include a bit more mid-bass; lower it for deeper bass only.
+const LF_BIN_START = 0;
+const LF_BIN_END = 60;
 
 // Wave height in pixels
 const MAX_WAVE_HEIGHT = 20;
@@ -59,19 +48,9 @@ const GAUSSIAN_CUTOFF_BASE = 0.01;
 // This controls how powerful that randomness is
 const GAUSSIAN_CUTOFF_RANDOM_STRENGTH = 0.7;
 
-// Higher frequencies naturally have lower amplitudes. We multiply an incremental
-// bias to each frequency as the frequency goes up. This should actually be logarithmic,
-// but still looks quite good with this linear MULT.
-// For example, an increment of 0.01 means each subsequent wave is additionally 0.01 times
-// stronger than the previous
-const HF_BIAS_MULT_INCREMENT = 0.025;
-
-// Starting value for the above
-const HF_BIAS_MULT_BASE = 2.2; 
+// Amplitude multiplier for bass waves (same across the stack since all bins are low-freq)
+const LF_AMPLITUDE_MULT = 2.2;
 
 // Amplitude lower than which a frequency could be considered negligible
 // A higher value means you see less activity but only the louder frequencies
 const AMPLITUDE_THRESHOLD = 40;
-
-// Keep only this fraction of each wave's peak height (e.g. 0.3 = top 30%)
-const PEAK_KEEP_FRACTION = 0.3;
