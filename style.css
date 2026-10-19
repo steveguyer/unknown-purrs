@@ -5,7 +5,6 @@
     --control-fg: rgb(200, 200, 200);
     --control-border: rgb(200, 200, 200);
     --link-color: #ffffff;
-    --muted-link: #666666;
     --footer-color: #ffffff;
 }
 
@@ -15,7 +14,6 @@
     --control-fg: #222222;
     --control-border: #222222;
     --link-color: #222222;
-    --muted-link: #666666;
     --footer-color: #222222;
 }
 
@@ -40,11 +38,6 @@ body {
     display: none;
 }
 
-#source-code-link {
-    color: var(--muted-link);
-    font-size: 14px;
-}
-
 button {
     font-size: 17px;
     border: 1px solid var(--control-border);
@@ -53,13 +46,6 @@ button {
     background: var(--control-bg);
     position: static !important;
     margin: 4px;
-}
-
-#audio-upload {
-    font-size: 14px;
-    color: var(--control-fg);
-    margin: 4px;
-    vertical-align: middle;
 }
 
 #theme-toggle {

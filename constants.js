@@ -8,13 +8,13 @@ const THEMES = {
   dark: {
     background: [14, 14, 14],
     canvasFill: [0, 0, 0],
-    title: [190, 190, 190],
+    title: WAVE_STROKE,
     waveStroke: WAVE_STROKE,
   },
   light: {
     background: [245, 245, 245],
     canvasFill: [245, 245, 245],
-    title: [40, 40, 40],
+    title: WAVE_STROKE,
     waveStroke: WAVE_STROKE,
   },
 };

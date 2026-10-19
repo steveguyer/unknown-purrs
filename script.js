@@ -4,8 +4,7 @@ let tick = 0;
 // Random line cutoff values for each line, calculated once and set
 let cutoffs = [];
 
-// Map of sound files and the current sound file
-let sounds = {};
+// The track loaded on startup
 let sound;
 
 const THEME_STORAGE_KEY = "unknown-pleasures-theme";
@@ -27,14 +26,7 @@ for (let i = 0; i < SLICE_SIZE; ++i) {
 }
 
 function preload() {
-  sounds = {
-    "epic": loadSound("sounds/epic.mp3"),
-    "electronic": loadSound("sounds/electronic.mp3"),
-    "acoustic": loadSound("sounds/acoustic.mp3"),
-    "metal": loadSound("sounds/metal.mp3")
-    // "indian": loadSound("sounds/indian.mp3"),
-  };
-  sound = sounds["epic"];
+  sound = loadSound("sounds/peeves-purring.wav");
 }
 
 // Return y for a Gaussian distribution on x, with given mean and variance
@@ -70,40 +62,6 @@ function transformWithWeights(amps, cutoff) {
   return amps;
 }
 
-function resetWaveHistory() {
-  points = [];
-  for (let i = 0; i < SLICE_SIZE; ++i) {
-    points.push(emptySpectrum());
-  }
-  cutoffs = [];
-}
-
-function setSound(new_sound) {
-  sound.pause();
-  sound = sounds[new_sound];
-  resetWaveHistory();
-  sound.loop();
-}
-
-// Load a user-picked audio file and swap it in as the playing track.
-// p5 wraps the browser File in a p5.File; loadSound accepts its data URL.
-function handleUploadedFile(file) {
-  if (!file || file.type !== "audio") {
-    return;
-  }
-
-  if (sound && sound.isPlaying()) {
-    sound.stop();
-  }
-
-  loadSound(file.data, (loaded) => {
-    sound = loaded;
-    resetWaveHistory();
-    fft.setInput(sound);
-    sound.loop();
-  });
-}
-
 function applyTheme(name) {
   themeName = THEMES[name] ? name : "dark";
   document.documentElement.setAttribute("data-theme", themeName);
@@ -129,23 +87,6 @@ function setup() {
     savedTheme = "dark";
   }
 
-  // Track buttons
-  let buttons = [];
-  for (let key in sounds) {
-    let button = createButton(key);
-    button.position(0, 0);
-    button.parent("buttons-container");
-    button.mousePressed(() => setSound(key));
-    buttons.push(button);
-  }
-  console.log(buttons);
-
-  // Local file upload — accept audio only so the picker filters noise
-  let upload = createFileInput(handleUploadedFile);
-  upload.attribute("accept", "audio/*");
-  upload.parent("buttons-container");
-  upload.id("audio-upload");
-
   themeToggleButton = createButton("light mode");
   themeToggleButton.parent("buttons-container");
   themeToggleButton.id("theme-toggle");
@@ -157,6 +98,8 @@ function setup() {
   cnv.parent("canvas-container");
   document.getElementById("main-content-container").style.display = "block";
   fft = new p5.FFT();
+  fft.setInput(sound);
+  sound.loop();
 
   // Click anywhere on the page to pause/resume (skip controls/links)
   document.addEventListener("click", (event) => {
@@ -232,6 +175,15 @@ function draw() {
     }
     endShape();
   }
+
+  // Caption sits under the wave stack
+  noStroke();
+  fill(theme.title[0], theme.title[1], theme.title[2]);
+  textFont('Arial');
+  textSize(18);
+  textAlign(CENTER, TOP);
+  const stackBottom = START_Y + MAX_WAVE_HEIGHT + SEPARATION * (WAVE_COUNT - 1);
+  text("UNKNOWN PURRS", CANVAS_WIDTH / 2, stackBottom + 18);
 }
 
 function togglePlay() {
