@@ -88,6 +88,30 @@ button {
     color: #ff6700;
 }
 
+#play-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px auto 24px;
+    padding: 8px 20px;
+    border: 1px solid #ff6700;
+    border-radius: 999px;
+    color: #ff6700;
+    background: var(--control-bg);
+    cursor: pointer;
+}
+
+#play-button .paw {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+#play-button.playing {
+    background: #ff6700;
+    color: var(--control-bg);
+}
+
 a {
     text-decoration: none;
     color: var(--link-color);
