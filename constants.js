@@ -1,6 +1,24 @@
 const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
 
+// Blaze orange for the wave stroke in both themes
+const WAVE_STROKE = [255, 103, 0];
+
+const THEMES = {
+  dark: {
+    background: [14, 14, 14],
+    canvasFill: [0, 0, 0],
+    title: [190, 190, 190],
+    waveStroke: WAVE_STROKE,
+  },
+  light: {
+    background: [245, 245, 245],
+    canvasFill: [245, 245, 245],
+    title: [40, 40, 40],
+    waveStroke: WAVE_STROKE,
+  },
+};
+
 // Fraction of screen width on which lines are drawn
 const WIDTH_FRACTION = 0.40;
 

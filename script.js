@@ -8,6 +8,10 @@ let cutoffs = [];
 let sounds = {};
 let sound;
 
+const THEME_STORAGE_KEY = "unknown-pleasures-theme";
+let themeName = "dark";
+let themeToggleButton;
+
 // Store the set of frequencies for each section (always real FFT frames, never bare 0)
 function emptySpectrum() {
   let frame = [];
@@ -100,7 +104,31 @@ function handleUploadedFile(file) {
   });
 }
 
+function applyTheme(name) {
+  themeName = THEMES[name] ? name : "dark";
+  document.documentElement.setAttribute("data-theme", themeName);
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, themeName);
+  } catch (e) {
+    // Ignore storage failures (private mode, etc.)
+  }
+  if (themeToggleButton) {
+    themeToggleButton.html(themeName === "dark" ? "light mode" : "dark mode");
+  }
+}
+
+function toggleTheme() {
+  applyTheme(themeName === "dark" ? "light" : "dark");
+}
+
 function setup() {
+  let savedTheme = "dark";
+  try {
+    savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "dark";
+  } catch (e) {
+    savedTheme = "dark";
+  }
+
   // Track buttons
   let buttons = [];
   for (let key in sounds) {
@@ -118,40 +146,54 @@ function setup() {
   upload.parent("buttons-container");
   upload.id("audio-upload");
 
-  // Canvas
+  themeToggleButton = createButton("light mode");
+  themeToggleButton.parent("buttons-container");
+  themeToggleButton.id("theme-toggle");
+  themeToggleButton.mousePressed(toggleTheme);
+  applyTheme(savedTheme);
+
+  // Canvas — page click also toggles play/pause (see below)
   var cnv = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
   cnv.parent("canvas-container");
-  cnv.mouseClicked(togglePlay);
   document.getElementById("main-content-container").style.display = "block";
   fft = new p5.FFT();
+
+  // Click anywhere on the page to pause/resume (skip controls/links)
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("button, a, input, label, select, textarea, #buttons-container")) {
+      return;
+    }
+    togglePlay();
+  });
 }
 
 function draw() {
   
   tick++;
 
-  // FFT the current slice of audio, with SAMPLE_BINS frequency samples
-  var spectrum = fft.analyze(SAMPLE_BINS);
-  
-  // Add this slice to our main data array
-  points.push(spectrum);
-  if (points.length > SLICE_SIZE) {
-    points.shift();
+  // Only advance the waveform while audio is playing so pause freezes the stack
+  if (sound && sound.isPlaying()) {
+    var spectrum = fft.analyze(SAMPLE_BINS);
+    points.push(spectrum);
+    if (points.length > SLICE_SIZE) {
+      points.shift();
+    }
   }
 
-  background(0);
+  const theme = THEMES[themeName] || THEMES.dark;
+  background(theme.background[0], theme.background[1], theme.background[2]);
 
   // Title sits above the wave stack
   noStroke();
-  fill(190, 190, 190);
+  fill(theme.title[0], theme.title[1], theme.title[2]);
   textFont('Arial');
   textSize(26);
   textAlign(CENTER, BASELINE);
   text("PEEVES", CANVAS_WIDTH / 2, 115);
 
-  // Stroke gray, and fill black to ensure front waves hide the ones behind them
-  stroke(200, 200, 200);
-  fill(0, 0, 0);
+  // Blaze orange stroke; fill matches canvas so front waves hide ones behind
+  stroke(theme.waveStroke[0], theme.waveStroke[1], theme.waveStroke[2]);
+  fill(theme.canvasFill[0], theme.canvasFill[1], theme.canvasFill[2]);
   
   // Generate each wave..
   for (var j = 0; j < WAVE_COUNT; ++j) {

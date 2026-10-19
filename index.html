@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Unknown Pleasures Visualizer</title>
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="style.css?v=theme-orange" />
+    <script>
+      document.documentElement.setAttribute(
+        "data-theme",
+        localStorage.getItem("unknown-pleasures-theme") || "dark"
+      );
+    </script>
 
     <meta property="og:title" content="Unknown Pleasures Audio Visualizer" />
     <meta property="og:type" content="article" />
@@ -56,8 +62,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.sound.min.js"></script>
-    <script src="constants.js?v=title-lower-2"></script>
-    <script src="script.js?v=title-lower-2"></script>
+    <script src="constants.js?v=page-pause"></script>
+    <script src="script.js?v=page-pause"></script>
 </body>
 
 </html>
