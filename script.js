@@ -8,10 +8,18 @@ let cutoffs = [];
 let sounds = {};
 let sound;
 
-// Store the set of frequencies for each section
+// Store the set of frequencies for each section (always real FFT frames, never bare 0)
+function emptySpectrum() {
+  let frame = [];
+  for (let b = 0; b < SAMPLE_BINS; ++b) {
+    frame.push(0);
+  }
+  return frame;
+}
+
 let points = [];
 for (let i = 0; i < SLICE_SIZE; ++i) {
-  points.push(0);
+  points.push(emptySpectrum());
 }
 
 function preload() {
@@ -61,7 +69,7 @@ function transformWithWeights(amps, cutoff) {
 function resetWaveHistory() {
   points = [];
   for (let i = 0; i < SLICE_SIZE; ++i) {
-    points.push(0);
+    points.push(emptySpectrum());
   }
   cutoffs = [];
 }
@@ -159,7 +167,9 @@ function draw() {
     // Get time slices for just the current bin, across all time slices
     let current_wave_amps = [];
     for (var i = SLICE_SIZE - 1; i >= 0 ; --i) {
-      let val = points[i][current_bin] - AMPLITUDE_THRESHOLD;
+      let frame = points[i];
+      let raw = frame && frame[current_bin] != null ? frame[current_bin] : 0;
+      let val = raw - AMPLITUDE_THRESHOLD;
       val = val < 0 ? 0 : val; // No negs
       val *= LF_AMPLITUDE_MULT;
       current_wave_amps.push(val);
