@@ -99,15 +99,75 @@ function setup() {
   document.getElementById("main-content-container").style.display = "block";
   fft = new p5.FFT();
   fft.setInput(sound);
-  sound.loop();
+
+  // Chrome and Brave leave the audio context suspended until a gesture.
+  // Start now when they allow it; otherwise the first tap starts playback
+  // and is not also treated as a pause.
+  beginPlayback();
+  document.addEventListener("pointerdown", unlockAudio, true);
+  document.addEventListener("keydown", unlockAudio, true);
 
   // Click anywhere on the page to pause/resume (skip controls/links)
   document.addEventListener("click", (event) => {
+    if (ignoreNextClick) {
+      ignoreNextClick = false;
+      return;
+    }
     if (event.target.closest("button, a, input, label, select, textarea, #buttons-container")) {
+      return;
+    }
+    if (!playbackReady) {
+      beginPlayback();
       return;
     }
     togglePlay();
   });
+}
+
+let playbackReady = false;
+let ignoreNextClick = false;
+
+function isControlTarget(event) {
+  return event.target.closest("button, a, input, label, select, textarea, #buttons-container");
+}
+
+function finishPlayback(restart) {
+  const ctx = getAudioContext();
+  if (ctx.state !== "running") {
+    return false;
+  }
+  masterVolume(1);
+  if (restart && sound.isPlaying()) {
+    sound.stop();
+  }
+  if (!sound.isPlaying()) {
+    sound.loop();
+  }
+  playbackReady = sound.isPlaying();
+  return playbackReady;
+}
+
+function beginPlayback() {
+  const ctx = getAudioContext();
+  const wasRunning = ctx.state === "running";
+  if (!wasRunning && ctx.resume) {
+    const pending = ctx.resume();
+    if (ctx.state !== "running") {
+      if (pending && pending.then) {
+        pending.then(() => finishPlayback(true));
+      }
+      return false;
+    }
+  }
+  return finishPlayback(!wasRunning);
+}
+
+function unlockAudio(event) {
+  if (playbackReady || isControlTarget(event)) {
+    return;
+  }
+  ignoreNextClick = true;
+  beginPlayback();
 }
 
 function draw() {
