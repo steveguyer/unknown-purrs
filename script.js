@@ -139,14 +139,15 @@ function draw() {
     points.shift();
   }
 
-  // Draw title
   background(0);
+
+  // Title sits above the wave stack
   noStroke();
   fill(190, 190, 190);
   textFont('Arial');
   textSize(26);
   textAlign(CENTER, BASELINE);
-  text("PEEVES", CANVAS_WIDTH / 2, 120);
+  text("PEEVES", CANVAS_WIDTH / 2, 115);
 
   // Stroke gray, and fill black to ensure front waves hide the ones behind them
   stroke(200, 200, 200);

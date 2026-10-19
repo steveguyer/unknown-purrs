@@ -4,8 +4,8 @@ const CANVAS_HEIGHT = 500;
 // Fraction of screen width on which lines are drawn
 const WIDTH_FRACTION = 0.40;
 
-// Height from top in pixels to start drawing waves
-const START_Y = 110;
+// Height from top in pixels to start drawing waves (leave room for the title)
+const START_Y = 130;
 
 // Calculate wave start and end pixel X values based on the above
 const WAVE_WIDTH = WIDTH_FRACTION * CANVAS_WIDTH;
@@ -22,10 +22,10 @@ const SLICE_SIZE = 65;
 // Total stacked waves drawn top-to-bottom
 const WAVE_COUNT = 80;
 
-// FFT bin range spread across the full stack (low frequencies only).
-// Raise LF_BIN_END to include a bit more mid-bass; lower it for deeper bass only.
-const LF_BIN_START = 0;
-const LF_BIN_END = 60;
+// FFT bin range spread across the full stack (bass through mid).
+// Raise LF_BIN_END for more mids/highs; lower it for deeper bass only.
+const LF_BIN_START = 1;
+const LF_BIN_END = 220;
 
 // Wave height in pixels
 const MAX_WAVE_HEIGHT = 20;
