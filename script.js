@@ -79,6 +79,23 @@ function toggleTheme() {
   applyTheme(themeName === "dark" ? "light" : "dark");
 }
 
+// p5 pins the canvas at CANVAS_WIDTH/HEIGHT pixels via inline style.
+// Override that display size so a phone viewport scales the square
+// canvas down and the midpoint stays on the screen center.
+function fitCanvas(cnv) {
+  const el = (cnv && cnv.elt) || document.querySelector("#canvas-container canvas");
+  if (!el) {
+    return;
+  }
+  const available = document.documentElement.clientWidth || window.innerWidth || CANVAS_WIDTH;
+  const size = Math.max(1, Math.min(CANVAS_WIDTH, available));
+  el.style.setProperty("display", "block", "important");
+  el.style.setProperty("width", size + "px", "important");
+  el.style.setProperty("height", size + "px", "important");
+  el.style.setProperty("margin-left", "auto", "important");
+  el.style.setProperty("margin-right", "auto", "important");
+}
+
 function setup() {
   let savedTheme = "dark";
   try {
@@ -97,6 +114,10 @@ function setup() {
   var cnv = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
   cnv.parent("canvas-container");
   document.getElementById("main-content-container").style.display = "block";
+  fitCanvas(cnv);
+  requestAnimationFrame(function () {
+    fitCanvas(cnv);
+  });
   fft = new p5.FFT();
   fft.setInput(sound);
 
@@ -245,6 +266,13 @@ function draw() {
   const stackBottom = START_Y + MAX_WAVE_HEIGHT + SEPARATION * (WAVE_COUNT - 1);
   text("UNKNOWN PURRS", CANVAS_WIDTH / 2, stackBottom + 18);
 }
+
+window.addEventListener("resize", function () {
+  fitCanvas();
+});
+window.addEventListener("orientationchange", function () {
+  fitCanvas();
+});
 
 function togglePlay() {
   if (sound.isPlaying()) {
