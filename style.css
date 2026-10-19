@@ -38,6 +38,22 @@ body {
     display: none;
 }
 
+/* p5 sizes the canvas at a fixed 500px. On a narrower viewport that box
+   stays left-aligned and PEEVES (drawn at the canvas midpoint) sits right
+   of the screen center. Cap the display size and center the element. */
+#canvas-container {
+    width: 100%;
+    max-width: 100%;
+}
+
+#canvas-container canvas {
+    display: block;
+    width: min(500px, 100%) !important;
+    height: auto !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 button {
     font-size: 17px;
     border: 1px solid var(--control-border);
